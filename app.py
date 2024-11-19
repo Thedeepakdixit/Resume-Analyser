@@ -6,8 +6,12 @@ import streamlit as st
 import os
 import io
 from PIL import Image 
-import pdf2image
+import pdf2image 
 import google.generativeai as genai
+import subprocess
+import os
+
+
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
@@ -15,6 +19,12 @@ def get_gemini_response(input,pdf_cotent,prompt):
     model=genai.GenerativeModel('gemini-1.5-flash')
     response=model.generate_content([input,pdf_content[0],prompt])
     return response.text
+def check_poppler_installed():
+    try:
+        subprocess.check_output(['pdftoppm', '-v'])
+        return True
+    except subprocess.CalledProcessError:
+        return False
 
 def input_pdf_setup(uploaded_file):
     if uploaded_file is not None:
